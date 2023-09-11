@@ -4,25 +4,25 @@ import { h, render, useState, useEffect, Panel, List, ListItem } from 'https://l
 // https://api.lsong.one:8443/zhihu/top_questions
 
 const top_search = async () => {
-  const response = await fetch(`https://api.lsong.one:8443/zhihu/top_search`);
+  const response = await fetch(`https://api.lsong.org/zhihu/trending`);
   const data = await response.json();
-  return data.top_search.words;
+  return data;
 };
 
 const top_questions = async () => {
-  const response = await fetch(`https://api.lsong.one:8443/zhihu/top_questions`);
+  const response = await fetch(`https://api.lsong.org/zhihu/questions`);
   const data = await response.json();
-  return data.data;
+  return data;
 };
 
 const ZhihuQuestion = ({ data: x }) => {
-  return h('a', { className: 'zhihu-question', href: `https://www.zhihu.com/question/${x.target.id}` },
+  return h('a', { className: 'zhihu-question', href: x.url },
     h('aside', null,
-      h('h3', null, x.target.title),
-      h('span', null, x.detail_text),
+      h('h3', null, x.title),
+      h('span', null, x.content),
     ),
     h('figure', null,
-      h('img', { src: x.children[0]?.thumbnail || x.target.author.avatar_url })
+      // h('img', { src: x.children[0]?.thumbnail || x.target.author.avatar_url })
     )
   )
 };
@@ -35,9 +35,9 @@ const App = () => {
     top_questions().then(setListB);
   }, []);
   return [
-    h('h2', null, "Hot 🔥"),
+    h('h2', null, "Trending 🔥"),
     h('ol', null,
-      listA.map(x => h('li', {}, h('a', { href: `https://www.zhihu.com/search?q=${x.query}` }, x.display_query))),
+      listA.map(x => h('li', {}, h('a', { href: x.url }, x.title))),
     ),
     h('h2', null, "Questions"),
     h('ul', null,
